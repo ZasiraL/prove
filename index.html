@@ -1,0 +1,97 @@
+﻿<head>
+  <title> Tower of MAMAIA</title>
+</head>
+
+<style>
+  body{
+    text-align: center;
+    font-family: sans-serif;
+  }
+  #displaydiv{
+    text-align: left;
+    font-family:monospace;
+    width: 20em;
+    margin-bottom: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 120%;
+  }
+  button{
+    border: 1px solid black;
+    border-radius: 8px/50%;
+    background-color: #eee;
+    padding: 10px 20px;
+    width: 8em;
+    font-size: 110%;
+    outline: 0px;
+    margin: 6px;
+  }
+</style>
+
+
+<body>
+  <h1> Tower of Hanoi </h1>
+  <div id=displaydiv></div>
+  <button id=movebutton title="(down arrow)">
+    Move </button>
+  <button id=grabbutton title="(space)">
+    Grab </button>
+</body>
+
+<script>
+    document.title = "Tower of Hanoi";
+    function cursormove(state){
+        state.cursorpos = (1 + state.cursorpos)%3;
+    }
+    function cursoraction(state){
+        var c=state.cursorpos, x=state.cursorobj, t=state.towers[c];
+        if(x&&(!t.length||t[t.length-1]>x)){
+            t.push(x);
+            state.cursorobj=0}
+        if(!x&&t.length){
+            state.cursorobj = t.pop()}
+    }
+    function display(ui, state){
+        var s = "", t = state.towers, elem=ui.display;
+        for(var i=0; i<t.length; ++i){
+            line = "";
+            line += "| " + t[i].join(" ");
+            for(var j=0; j<state.maxheight - t[i].length; ++j){
+                line += " ."}
+            s += line; 
+            if(i==state.cursorpos){
+                s += " &lt; " + (state.cursorobj? state.cursorobj: "")}
+            s += "<br>"}
+        elem.innerHTML = s;
+        ui.grab.innerHTML = state.cursorobj? "Place" : "Grab";
+    }
+    function init(){
+        var state = {
+            towers:[[7,6,5,4,3,2,1],[],[]],
+            cursorpos: 0,
+            cursorobj: 0,
+            maxheight: 7
+        }
+        var ui = {
+            display: document.getElementById("displaydiv"),
+            move: document.getElementById("movebutton"),
+            grab: document.getElementById("grabbutton"),
+        }
+        ui.move.addEventListener("mousedown", function(e){
+            cursormove(state);
+            display(ui, state)})
+        ui.grab.addEventListener("mousedown", function(e){
+            cursoraction(state);
+            display(ui, state)})
+        
+        window.addEventListener("keydown", function(e){
+            if(e.keyCode == 32){
+                cursoraction(state);
+                display(ui, state)}
+            if(e.keyCode == 40){
+                cursormove(state);
+                display(ui, state)}})
+        display(ui, state);
+    }
+    window.addEventListener("load", init);
+</script>
